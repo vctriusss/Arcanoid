@@ -1,4 +1,5 @@
 import pygame as pg
+import time
 
 res = screen_width, screen_height = 1200, 720
 fps = 60
@@ -72,7 +73,12 @@ def game():
     platform = Platform()
     ball = Ball()
     clock = pg.time.Clock()
-    pg.time.wait(1000)
+    time_end = time.time() + 1
+    while time.time() < time_end:
+        screen.blit(img, (0, 0))
+        pg.draw.rect(screen, pg.Color('magenta'), platform.body)
+        pg.draw.circle(screen, pg.Color('white'), ball.center, ball.R)
+        pg.display.flip()
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
