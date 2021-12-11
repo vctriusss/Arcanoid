@@ -1,5 +1,4 @@
-from constants import screen, screen_height, screen_width
-import pygame as pg
+from constants import *
 
 
 class Platform:
