@@ -1,8 +1,10 @@
-import pygame as pg
 import time
 from constants import *
 from Platform import Platform
 from Ball import Ball
+from Block import Block
+from random import choice
+from block_patterns import blocks1
 
 pg.init()
 pg.display.set_caption('Arcanoid')
@@ -26,20 +28,23 @@ def GameOverScenario():
         pg.display.flip()
 
 
-def draw_objects(platform, ball):
+def draw_objects(platform, ball, block):
     pg.draw.rect(screen, pg.Color('magenta'), platform.body, border_radius=3)
-    pg.draw.circle(screen, pg.Color('white'), ball.center, ball.R)
+    pg.draw.circle(screen, pg.Color('cyan'), ball.center, ball.R)
+    for block in blocks1:
+        pg.draw.rect(screen, block.color, block.body, border_radius=3)
     pg.display.flip()
 
 
 def game():
     platform = Platform()
     ball = Ball()
+    block = Block(100, 100, 100, 100, choice(colors))
     clock = pg.time.Clock()
     time_end = time.time() + 0.5
     while time.time() < time_end:
         screen.blit(img, (0, 0))
-        draw_objects(platform, ball)
+        draw_objects(platform, ball, block)
 
     while True:
         for event in pg.event.get():
@@ -56,7 +61,7 @@ def game():
         if ball.is_out():
             GameOverScenario()
             game()
-        draw_objects(platform, ball)
+        draw_objects(platform, ball, block)
         ball.fly()
         ball.wall_bounce()
         platform.collision(ball)
