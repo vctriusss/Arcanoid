@@ -3,7 +3,7 @@ import time
 
 res = screen_width, screen_height = 1200, 720
 fps = 60
-game_over = False
+
 
 class Platform:
     def __init__(self):
@@ -26,7 +26,7 @@ class Platform:
 class Ball:
     def __init__(self):
         self.r = 8
-        self.R = int(self.r * (2 ** 0.5)) + 1
+        self.R = int(self.r * (2 ** 0.5))
         self.body = pg.Rect(screen_width // 2 - self.r, screen_height - 15 - 2 * self.R, 2 * self.r, 2 * self.r)
         self.center = self.body.x + self.r, self.body.y + self.r
         self.dx = 1
@@ -73,10 +73,10 @@ def game():
     platform = Platform()
     ball = Ball()
     clock = pg.time.Clock()
-    time_end = time.time() + 1
+    time_end = time.time() + 0.5
     while time.time() < time_end:
         screen.blit(img, (0, 0))
-        pg.draw.rect(screen, pg.Color('magenta'), platform.body)
+        pg.draw.rect(screen, pg.Color('magenta'), platform.body, border_radius=3)
         pg.draw.circle(screen, pg.Color('white'), ball.center, ball.R)
         pg.display.flip()
     while True:
@@ -84,7 +84,7 @@ def game():
             if event.type == pg.QUIT:
                 exit()
         screen.blit(img, (0, 0))
-        pg.draw.rect(screen, pg.Color('magenta'), platform.body)
+        pg.draw.rect(screen, pg.Color('magenta'), platform.body, border_radius=3)
         pg.draw.circle(screen, pg.Color('white'), ball.center, ball.R)
         ball.fly()
         ball.wall_bounce()
@@ -97,7 +97,7 @@ def game():
         if key[pg.K_d] and platform.body.right < screen_width:
             platform.body.right += platform.speed
 
-        if key[pg.K_r]:
+        if key[pg.K_r] and game_over:
             game()
         pg.display.flip()
         clock.tick(fps)
