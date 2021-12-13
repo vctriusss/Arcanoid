@@ -10,7 +10,7 @@ class Ball:
         self.center = self.body.x + self.r, self.body.y + self.r
         self.dx = 1
         self.dy = -1
-        self.speed = 5
+        self.speed = 6
 
     def fly(self):
         self.body.x += self.dx * self.speed

@@ -1,5 +1,4 @@
-from constants import *
-from Ball import Ball
+from constants import screen, pg
 
 
 class Block:
@@ -14,16 +13,3 @@ class Block:
 
     def draw(self):
         pg.draw.rect(screen, self.color, self.body, border_radius=3)
-
-    def hit_by(self, ball: Ball):
-        if self.body.colliderect(ball.body):
-            # right and left border
-            if ball.body.left == self.body.right or ball.body.right == self.body.left:
-                ball.dx *= -1
-            # bottom and topborder
-            if ball.body.top == self.body.bottom or ball.body.bottom == self.body.top:
-                ball.dy *= -1
-            return True
-        else:
-            return False
-

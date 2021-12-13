@@ -9,6 +9,6 @@ textfont = pg.font.SysFont('Times New Roman', 80)
 textfont_small = pg.font.SysFont('Times New Roman', 40)
 text_gameover = textfont.render('GAME OVER', True, pg.Color('red'))
 text_youwin = textfont.render('YOU WIN!', True, pg.Color('green'))
-text_reload = textfont_small.render('Press R to restart', True, pg.Color('red'))
+text_reload = textfont_small.render('Press R to restart', True, pg.Color('white'))
 
 colors = ['magenta', 'yellow', 'cyan', 'blue2', 'green', 'darkmagenta', 'deeppink']

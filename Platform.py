@@ -13,10 +13,5 @@ class Platform:
         pg.draw.rect(screen, pg.Color('white'), self.body)
         self.body = self.body.inflate(15, 0)
 
-    def collision(self, ball):
-        if self.body.colliderect(ball.body):
-            ball.dy = -1
-            pg.draw.rect(screen, pg.Color('white'), self.body)
-
     def draw(self):
         pg.draw.rect(screen, pg.Color('magenta'), self.body, border_radius=3)
