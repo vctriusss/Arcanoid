@@ -1,4 +1,4 @@
-from constants import screen_width, screen_height
+from constants import screen_width, screen_height, screen
 import pygame as pg
 
 
@@ -30,3 +30,6 @@ class Ball:
         # left wall
         if self.center[0] - self.R <= 0:
             self.dx = -self.dx
+
+    def draw(self):
+        pg.draw.circle(screen, pg.Color('cyan'), self.center, self.R)

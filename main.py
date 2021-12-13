@@ -2,7 +2,6 @@ import time
 from constants import *
 from Platform import Platform
 from Ball import Ball
-from Block import Block
 from block_patterns import *
 
 pg.init()
@@ -27,12 +26,13 @@ def GameOverScenario():
         pg.display.flip()
 
 
-def draw_objects(platform, ball, block_pattern):
-    pg.draw.rect(screen, pg.Color('magenta'), platform.body, border_radius=3)
-    pg.draw.circle(screen, pg.Color('cyan'), ball.center, ball.R)
-    for block in block_pattern:
-        pg.draw.rect(screen, block.color, block.body, border_radius=3)
-    pg.display.flip()
+def draw_objects(*args):
+    for arg in args:
+        if type(arg) != list:
+            arg.draw()
+        else:
+            for block in arg:
+                block.draw()
 
 
 def game():
@@ -40,10 +40,12 @@ def game():
     ball = Ball()
     block_pattern = choice(patterns)
     clock = pg.time.Clock()
-    time_end = time.time() + 0.5
+
+    time_end = time.time() + 1
     while time.time() < time_end:
         screen.blit(img, (0, 0))
-        draw_objects(platform, ball, block_pattern)
+        draw_objects(platform, block_pattern)
+        pg.display.flip()
 
     while True:
         for event in pg.event.get():
@@ -57,13 +59,17 @@ def game():
         if key[pg.K_ESCAPE]:
             exit()
         screen.blit(img, (0, 0))
+
         if ball.is_out():
             GameOverScenario()
             game()
         draw_objects(platform, ball, block_pattern)
+        for block in block_pattern:
+            block.hit_by(ball)
         ball.fly()
         ball.wall_bounce()
         platform.collision(ball)
+
         pg.display.flip()
         clock.tick(fps)
 

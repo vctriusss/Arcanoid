@@ -17,3 +17,6 @@ class Platform:
         if self.body.colliderect(ball.body):
             ball.dy = -1
             pg.draw.rect(screen, pg.Color('white'), self.body)
+
+    def draw(self):
+        pg.draw.rect(screen, pg.Color('magenta'), self.body, border_radius=3)
