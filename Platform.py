@@ -9,9 +9,9 @@ class Platform:
         self.body = pg.Rect(screen_width // 2 - self.width // 2, screen_height - self.height - 5,
                             self.width, self.height)
 
-    def resize(self):
+    def resize(self, k):
         pg.draw.rect(screen, pg.Color('white'), self.body)
-        self.body = self.body.inflate(15, 0)
+        self.body = self.body.inflate((k-1) * self.width, 0)
 
     def draw(self):
         pg.draw.rect(screen, pg.Color('magenta'), self.body, border_radius=3)

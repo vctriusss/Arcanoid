@@ -3,13 +3,15 @@ from constants import *
 from Platform import Platform
 from Ball import Ball
 from block_patterns import *
+from Bonus import Bonus
 
-pg.init()
+
 pg.display.set_caption('Arcanoid')
 img = pg.image.load('background.jpg')
 
 
 def EndGameScenario(win: bool):
+    block_pattern.clear()
     black = pg.Rect(int(0.3 * screen_width), int(0.45 * screen_height), 500, 150)
     while True:
         for event in pg.event.get():
@@ -46,6 +48,7 @@ def object_collision(obj1, obj2):
         pg.draw.rect(screen, pg.Color('white'), obj1.body, border_radius=3)
         if type(obj1) == Block:
             block_pattern.remove(obj1)
+            bonus_balls.append(Bonus(obj1))
 
 
 def draw_objects(*args):
@@ -59,9 +62,12 @@ def draw_objects(*args):
 
 
 def game():
+    bonus_balls.clear()
+    global block_pattern
+    block_pattern = []
+    pg.init()
     platform = Platform()
     ball = Ball()
-    global block_pattern
     block_pattern = choice(patterns).copy()
     clock = pg.time.Clock()
 
@@ -86,16 +92,23 @@ def game():
 
         ball.fly()
         if ball.is_out():
-            EndGameScenario(win=False)
-            game()
+            restart = EndGameScenario(win=False)
+            if restart:
+                game()
         ball.wall_bounce()
         object_collision(platform, ball)
         for block in block_pattern:
             object_collision(block, ball)
             if len(block_pattern) == 0:
+                block.draw()
                 EndGameScenario(win=True)
                 game()
-        draw_objects(platform, ball, block_pattern)
+        for b in bonus_balls:
+            b.fly()
+            if b.body.colliderect(platform.body):
+                eval(b.bonus)
+                bonus_balls.remove(b)
+        draw_objects(platform, ball, block_pattern, bonus_balls)
         clock.tick(fps)
 
 
