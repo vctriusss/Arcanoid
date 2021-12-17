@@ -1,13 +1,14 @@
 import time
 from constants import *
 from Platform import Platform
-from Ball import Ball
+from Ball import Ball, randint
 from block_patterns import patterns, choice
 from Bonus import Bonus
 
 pg.init()
 pg.display.set_caption('Arcanoid')
-img = pg.image.load('backgroundd.jpg')
+img = pg.image.load('background.jpg')
+img = pg.transform.scale(img, res)
 
 
 def EndGameScenario(win: bool):
@@ -18,7 +19,7 @@ def EndGameScenario(win: bool):
     :param win: True if player won (no blocks are left), False if player lost (ball is out of bounds)
     :return: True if restart key is pressed
     """
-    black = pg.Rect(int(0.3 * screen_width), int(0.45 * screen_height), 500, 150)
+    black = pg.Rect(int(0.35 * screen_width), int(0.4 * screen_height), 500, 150)
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -28,12 +29,12 @@ def EndGameScenario(win: bool):
                     exit()
                 elif event.key == pg.K_r:
                     return True
-        pg.draw.rect(screen, pg.Color('black'), black)
+        # pg.draw.rect(screen, pg.Color('black'), black)
         if win:
-            screen.blit(text_youwin, (black.x + 10, black.y + 5))
+            screen.blit(text_youwin, (black.x + 50, black.y + 5))
         else:
             screen.blit(text_gameover, (black.x + 10, black.y + 5))
-        screen.blit(text_reload, (black.x + 10, black.y + 100))
+        screen.blit(text_reload, (black.x + 20, black.y + 100))
         pg.display.flip()
 
 
@@ -97,8 +98,13 @@ def game(pattern: list):
     :return: None
     """
     bonus_balls.clear()
+    balls.clear()
     platform = Platform()
-    ball = Ball()
+    # ball appears in a random spot on the bottom left side of the screen
+    ball = Ball(randint(10, screen_width // 2 - 100), screen_height)
+    ball1 = Ball(randint(10, screen_width // 2 - 100), screen_height)
+    balls.append(ball)
+    balls.append(ball1)
     block_pattern = pattern.copy()
     assign_bonuses(block_pattern)
     clock = pg.time.Clock()
@@ -123,21 +129,24 @@ def game(pattern: list):
             exit()
 
         screen.blit(img, (0, 0))
-        ball.fly()
-        if ball.is_out():  # -> game over
-            restart = EndGameScenario(win=False)
-            if restart:
-                game(choice(patterns))
-        ball.wall_bounce()
-        if object_collision(platform, ball):
-            platform.draw(col=pg.Color('white'))
+        for ball in balls:
+            ball.fly()
+            if ball.is_out():
+                balls.remove(ball)  # -> game over
+                if len(balls) == 0:
+                    restart = EndGameScenario(win=False)
+                    if restart:
+                        game(choice(patterns))
+            ball.wall_bounce()
+            if object_collision(platform, ball):
+                platform.draw(col=pg.Color('white'))
 
-        for block in block_pattern:
-            if object_collision(block, ball):
-                block.draw(col=pg.Color('white'))
-                block_pattern.remove(block)
-                if block.bonus:
-                    bonus_balls.append(Bonus(block))
+            for block in block_pattern:
+                if object_collision(block, ball):
+                    block.draw(col=pg.Color('white'))
+                    block_pattern.remove(block)
+                    if block.bonus:
+                        bonus_balls.append(Bonus(block))
 
         if len(block_pattern) == 0:  # no blocks are left -> game won
             screen.blit(img, (0, 0))
@@ -152,7 +161,7 @@ def game(pattern: list):
                 exec(bb.bonus)  # applying a bonus
                 bonus_balls.remove(bb)
 
-        draw_objects(platform, ball, block_pattern, bonus_balls)
+        draw_objects(platform, balls, block_pattern, bonus_balls)
         clock.tick(fps)
 
 

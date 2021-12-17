@@ -9,14 +9,15 @@ class Ball:
     Ball has a parameter body, which is basically a hitbox of a ball
     Body itself is a pygame.Rect() object, geometrically it is a square, which is inscried in a circle with radius R
     """
-    def __init__(self):
+    def __init__(self, x, y):
         """
         Initialisation of Ball
+        :param x: x coordinate of top left corner of the ball body
+        :param y: y coordinate of top left corner of the ball body
         """
         self.r = 8
         self.R = int(self.r * (2 ** 0.5))
-        # ball appears in a random spot on the bottom left side of the screen
-        self.body = pg.Rect(randint(10, screen_width // 2 - 100), screen_height, 2 * self.r, 2 * self.r)
+        self.body = pg.Rect(x, y, 2 * self.r, 2 * self.r)
         self.center = self.body.x + self.r, self.body.y + self.r
         # x direction is chosen randomly
         self.dx = choice([-1, 1])
