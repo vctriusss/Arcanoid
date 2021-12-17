@@ -17,6 +17,7 @@ class Platform:
         self.speed = 10
         self.body = pg.Rect(screen_width // 2 - self.width // 2, screen_height - self.height - 5,
                             self.width, self.height)
+        self.color = pg.Color('magenta')
 
     def resize(self, k):
         """
@@ -27,9 +28,11 @@ class Platform:
         pg.draw.rect(screen, pg.Color('white'), self.body)
         self.body = self.body.inflate((k-1) * self.width, 0)
 
-    def draw(self):
+    def draw(self, col=None):
         """
         Function that draws the platform on the screen
+        :param col: color of object, if not given, object will be drawn with default color
         :return: None
         """
-        pg.draw.rect(screen, pg.Color('magenta'), self.body, border_radius=3)
+        color = col if col else self.color
+        pg.draw.rect(screen, color, self.body, border_radius=3)

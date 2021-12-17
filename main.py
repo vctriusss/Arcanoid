@@ -7,7 +7,7 @@ from Bonus import Bonus
 
 pg.init()
 pg.display.set_caption('Arcanoid')
-img = pg.image.load('background.jpg')
+img = pg.image.load('backgroundd.jpg')
 
 
 def EndGameScenario(win: bool):
@@ -49,7 +49,7 @@ def object_collision(obj1, obj2):
         delta_x = obj2.body.right - obj1.body.left if obj2.dx > 0 else obj1.body.right - obj2.body.left
         delta_y = obj2.body.bottom - obj1.body.top if obj2.dy > 0 else obj1.body.bottom - obj2.body.top
         # corner hit
-        if abs(delta_x - delta_y) < 5:
+        if abs(delta_x - delta_y) < 3:
             obj2.dx *= -1
             obj2.dy *= -1
         # left or right side hit
@@ -58,7 +58,6 @@ def object_collision(obj1, obj2):
         # top or bottom side hit
         else:
             obj2.dx *= -1
-        pg.draw.rect(screen, pg.Color('white'), obj1.body, border_radius=3)
         return True
     return False
 
@@ -130,10 +129,12 @@ def game(pattern: list):
             if restart:
                 game(choice(patterns))
         ball.wall_bounce()
-        object_collision(platform, ball)
+        if object_collision(platform, ball):
+            platform.draw(col=pg.Color('white'))
 
         for block in block_pattern:
             if object_collision(block, ball):
+                block.draw(col=pg.Color('white'))
                 block_pattern.remove(block)
                 if block.bonus:
                     bonus_balls.append(Bonus(block))

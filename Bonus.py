@@ -1,4 +1,4 @@
-from constants import bonuses, pg, screen, screen_height
+from constants import bonus_colors, pg, screen, screen_height
 from Block import Block
 
 
@@ -24,7 +24,7 @@ class Bonus:
         self.bonus = block.bonus  # block parameter bonus (effect of a bonus) is transfered to a ball bonus
         self.dy = 1
         self.dx = 0
-        self.color = [pg.Color('green'), pg.Color('red')][bonuses.index(self.bonus) % 2]
+        self.color = bonus_colors[block.bonus]
         self.image = pg.Surface((self.r, self.r))
 
     def draw(self):

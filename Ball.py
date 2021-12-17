@@ -16,7 +16,7 @@ class Ball:
         self.r = 8
         self.R = int(self.r * (2 ** 0.5))
         # ball appears in a random spot on the bottom left side of the screen
-        self.body = pg.Rect(randint(0, screen_width // 2 - 100), screen_height, 2 * self.r, 2 * self.r)
+        self.body = pg.Rect(randint(10, screen_width // 2 - 100), screen_height, 2 * self.r, 2 * self.r)
         self.center = self.body.x + self.r, self.body.y + self.r
         # x direction is chosen randomly
         self.dx = choice([-1, 1])

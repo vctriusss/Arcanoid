@@ -24,9 +24,11 @@ class Block:
         self.color = color
         self.bonus = None
 
-    def draw(self):
+    def draw(self, col=None):
         """
         Function that draws the block on the screen
+        :param col: color of object, if not given, object will be drawn with default color
         :return: None
         """
-        pg.draw.rect(screen, self.color, self.body, border_radius=3)
+        color = col if col else self.color
+        pg.draw.rect(screen, color, self.body, border_radius=3)
