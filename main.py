@@ -1,9 +1,10 @@
 import time
 from constants import *
 from Platform import Platform
-from Ball import Ball, randint
+from Ball import Ball
 from block_patterns import patterns, choice
 from Bonus import Bonus
+from random import randint
 
 pg.init()
 pg.display.set_caption('Arcanoid')
@@ -38,7 +39,10 @@ def EndGameScenario(win: bool):
         pg.display.flip()
 
 
-def object_collision(obj1, obj2):
+# main idea of this function was borrowed and adopted from another project
+# URL: https://github.com/StanislavPetrovV/Python-Arkanoid-Breakout
+# start of borrowing
+def ObjectCollision(obj1, obj2):
     """
     Basic function of game physics
     If collision is detected, it changes the fly direction of obj2 depending on a border, where static object was hit
@@ -50,20 +54,21 @@ def object_collision(obj1, obj2):
         delta_x = obj2.body.right - obj1.body.left if obj2.dx > 0 else obj1.body.right - obj2.body.left
         delta_y = obj2.body.bottom - obj1.body.top if obj2.dy > 0 else obj1.body.bottom - obj2.body.top
         # corner hit
-        if abs(delta_x - delta_y) < 3:
+        if abs(delta_x - delta_y) < 5:
             obj2.dx *= -1
             obj2.dy *= -1
         # left or right side hit
         elif delta_x > delta_y:
             obj2.dy *= -1
         # top or bottom side hit
-        else:
+        elif delta_x < delta_y:
             obj2.dx *= -1
         return True
     return False
+# end of borrowing
 
 
-def draw_objects(*args):
+def DrawObjects(*args):
     """
     Function draws objects, which are given in args
     :param args: objects to be drawn (can be class object or a list of objects)
@@ -99,22 +104,21 @@ def game(pattern: list):
     """
     bonus_balls.clear()
     balls.clear()
+    # initialising all neccessary objects
     platform = Platform()
     # ball appears in a random spot on the bottom left side of the screen
     ball = Ball(randint(10, screen_width // 2 - 100), screen_height)
-    ball1 = Ball(randint(10, screen_width // 2 - 100), screen_height)
     balls.append(ball)
-    balls.append(ball1)
     block_pattern = pattern.copy()
     assign_bonuses(block_pattern)
     clock = pg.time.Clock()
-
+    # small delay
     time_end = time.time() + 1
     while time.time() < time_end:
         screen.blit(img, (0, 0))
-        draw_objects(platform, block_pattern)
+        DrawObjects(platform, block_pattern)
         pg.display.flip()
-
+    # main loop
     while True:
         # controls
         for event in pg.event.get():
@@ -129,39 +133,42 @@ def game(pattern: list):
             exit()
 
         screen.blit(img, (0, 0))
+        # rendering ball movement
         for ball in balls:
             ball.fly()
-            if ball.is_out():
+            if ball.IsOut():
                 balls.remove(ball)  # -> game over
                 if len(balls) == 0:
                     restart = EndGameScenario(win=False)
                     if restart:
-                        game(choice(patterns))
-            ball.wall_bounce()
-            if object_collision(platform, ball):
-                platform.draw(col=pg.Color('white'))
+                        game(choice(patterns))  # new game
+            if ObjectCollision(platform, ball) and ball.dy > 0:
+                platform.draw(col=pg.Color('white'))  # hit flash
+            ball.WallBounce()  # detecting wall collision
 
+            # rendering block hit
             for block in block_pattern:
-                if object_collision(block, ball):
-                    block.draw(col=pg.Color('white'))
+                if ObjectCollision(block, ball):
+                    block.draw(col=pg.Color('white'))  # hit flash
                     block_pattern.remove(block)
                     if block.bonus:
-                        bonus_balls.append(Bonus(block))
+                        bonus_balls.append(Bonus(block))  # initialising new bonus ball
 
         if len(block_pattern) == 0:  # no blocks are left -> game won
             screen.blit(img, (0, 0))
             EndGameScenario(win=True)
-            game(choice(patterns))
+            game(choice(patterns))  # new game
 
+        # rendering bonus balls movement
         for bb in bonus_balls:
             bb.drop()
-            if bb.is_out():
+            if bb.IsOut():
                 bonus_balls.remove(bb)
             if bb.body.colliderect(platform.body):
                 exec(bb.bonus)  # applying a bonus
                 bonus_balls.remove(bb)
 
-        draw_objects(platform, balls, block_pattern, bonus_balls)
+        DrawObjects(platform, balls, block_pattern, bonus_balls)
         clock.tick(fps)
 
 

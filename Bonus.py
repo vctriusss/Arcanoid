@@ -43,7 +43,7 @@ class Bonus:
         self.body.y += self.dy * self.speed
         self.center = self.body.x + self.r, self.body.y + self.r
 
-    def is_out(self):
+    def IsOut(self):
         """
         Function checks whether the bonus is out out screen (top y coordinate > screen height)
         :return: True if ball is out of bounds, else False

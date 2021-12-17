@@ -1,6 +1,6 @@
 from constants import screen_width, screen_height, screen
 import pygame as pg
-from random import randint, choice
+from random import choice
 
 
 class Ball:
@@ -34,14 +34,14 @@ class Ball:
         self.body.y += self.dy * self.speed
         self.center = self.body.x + self.r, self.body.y + self.r
 
-    def is_out(self):
+    def IsOut(self):
         """
         Function checks whether the ball is out out screen (top y coordinate > screen height)
         :return: True if ball is out of bounds, else False
         """
         return self.center[1] - self.R > screen_height
 
-    def wall_bounce(self):
+    def WallBounce(self):
         """
         Basic function of ball bouncing from walls
         It changes ball direction according to a wall, which it has hit
