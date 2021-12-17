@@ -5,7 +5,7 @@ from Ball import Ball
 from block_patterns import *
 from Bonus import Bonus
 
-
+pg.init()
 pg.display.set_caption('Arcanoid')
 img = pg.image.load('background.jpg')
 
@@ -46,9 +46,7 @@ def object_collision(obj1, obj2):
         else:
             obj2.dx *= -1
         pg.draw.rect(screen, pg.Color('white'), obj1.body, border_radius=3)
-        if type(obj1) == Block:
-            block_pattern.remove(obj1)
-            bonus_balls.append(Bonus(obj1))
+        return True
 
 
 def draw_objects(*args):
@@ -61,20 +59,28 @@ def draw_objects(*args):
     pg.display.flip()
 
 
+def assign_bonuses(pattern):
+    size = len(pattern)
+    n = int(0.2 * size)
+    for i in range(n):
+        b = choice(pattern)
+        b.bonus = choice(bonuses)
+
+
 def game():
     bonus_balls.clear()
     global block_pattern
     block_pattern = []
-    pg.init()
     platform = Platform()
     ball = Ball()
     block_pattern = choice(patterns).copy()
+    assign_bonuses(block_pattern)
     clock = pg.time.Clock()
 
     time_end = time.time() + 1
     while time.time() < time_end:
         screen.blit(img, (0, 0))
-        draw_objects(platform, ball)
+        draw_objects(platform, block_pattern)
         pg.display.flip()
 
     while True:
@@ -97,17 +103,23 @@ def game():
                 game()
         ball.wall_bounce()
         object_collision(platform, ball)
+
         for block in block_pattern:
-            object_collision(block, ball)
-            if len(block_pattern) == 0:
-                block.draw()
-                EndGameScenario(win=True)
-                game()
-        for b in bonus_balls:
-            b.fly()
-            if b.body.colliderect(platform.body):
-                eval(b.bonus)
-                bonus_balls.remove(b)
+            if object_collision(block, ball):
+                block_pattern.remove(block)
+                if block.bonus:
+                    bonus_balls.append(Bonus(block))
+        if len(block_pattern) == 0:
+            screen.blit(img, (0, 0))
+            EndGameScenario(win=True)
+            game()
+
+        for bb in bonus_balls:
+            bb.fly()
+            if bb.body.colliderect(platform.body):
+                exec(bb.bonus)
+                bonus_balls.remove(bb)
+
         draw_objects(platform, ball, block_pattern, bonus_balls)
         clock.tick(fps)
 

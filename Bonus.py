@@ -1,9 +1,8 @@
-import pygame as pg
 from constants import *
 from Block import Block
 
 
-class Bonus():
+class Bonus:
     def __init__(self, block: Block):
         self.center = block.body.center
         self.r = 6
