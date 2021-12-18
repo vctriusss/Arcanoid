@@ -1,7 +1,8 @@
 import unittest
-from main import Ball, ObjectCollision, Platform, Bonus
+from main import Ball, ObjectCollision, Platform, Bonus, AssignBonuses
 from Block import Block
-from constants import *
+from constants import screen_width, screen_height, bonuses
+from block_patterns import choice, patterns
 
 
 class GameTest(unittest.TestCase):
@@ -15,7 +16,7 @@ class GameTest(unittest.TestCase):
 
     def test_right_collision(self):
         ball = Ball(100, 100)
-        block = Block(50, 50, 60, 60, pg.Color('white'))
+        block = Block(50, 50, 60, 60, (0, 0, 0))
         self.assertTrue(ObjectCollision(block, ball))
 
     def test_correct_new_direction(self):
@@ -40,6 +41,18 @@ class GameTest(unittest.TestCase):
         if ObjectCollision(platform, bonus):
             exec(bonus.bonus)
         self.assertEqual(platform.body.width, 187)
+
+    def test_fly(self):
+        ball = Ball(10, 10)
+        ball.dx = 1
+        x0, y0 = ball.center
+        ball.fly()
+        self.assertEqual(ball.center, (x0 + 6, y0 - 6))
+
+    def test_probability(self):
+        pattern = AssignBonuses(choice(patterns))
+        bonus_list = [b.bonus is not None for b in pattern]
+        self.assertTrue(sum(bonus_list) <= 0.2 * len(pattern))
 
 
 if __name__ == '__main__':

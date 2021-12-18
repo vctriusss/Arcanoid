@@ -83,7 +83,7 @@ def DrawObjects(*args):
     pg.display.flip()
 
 
-def assign_bonuses(pattern: list):
+def AssignBonuses(pattern: list):
     """
     Function assignes bonuses to 20% blocks in patterns, other block remain block.bonus = None as default
     :param pattern: pattern (list of all blocks)
@@ -94,6 +94,7 @@ def assign_bonuses(pattern: list):
     for i in range(n):
         b = choice(pattern)
         b.bonus = choice(bonuses)
+    return pattern
 
 
 def game(pattern: list):
@@ -109,8 +110,7 @@ def game(pattern: list):
     # ball appears in a random spot on the bottom left side of the screen
     ball = Ball(randint(10, screen_width // 2 - 100), screen_height)
     balls.append(ball)
-    block_pattern = pattern.copy()
-    assign_bonuses(block_pattern)
+    block_pattern = AssignBonuses(pattern.copy())
     clock = pg.time.Clock()
     # small delay
     time_end = time.time() + 1
