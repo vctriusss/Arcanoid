@@ -32,6 +32,41 @@ class GameTest(unittest.TestCase):
         ball.WallBounce()
         self.assertEqual(ball.dx, -1)
 
+    def test_hit_left(self):
+        ball = Ball(35, 55)
+        ball.dx = 1
+        block = Block(50, 50, 60, 60, (0, 0, 0))
+        ObjectCollision(block, ball)
+        self.assertEqual(ball.dx, -1)
+
+    def test_hit_right(self):
+        ball = Ball(105, 55)
+        ball.dx = -1
+        block = Block(50, 50, 60, 60, (0, 0, 0))
+        ObjectCollision(block, ball)
+        self.assertEqual(ball.dx, 1)
+
+    def test_hit_top(self):
+        ball = Ball(105, 35)
+        ball.dy = 1
+        block = Block(50, 50, 60, 60, (0, 0, 0))
+        ObjectCollision(block, ball)
+        self.assertEqual(ball.dy, -1)
+
+    def test_hit_bottom(self):
+        ball = Ball(105, 105)
+        ball.dy = -1
+        block = Block(50, 50, 60, 60, (0, 0, 0))
+        ObjectCollision(block, ball)
+        self.assertEqual(ball.dy, 1)
+
+    def test_hit_corner(self):
+        ball = Ball(45, 46)
+        ball.dx, ball.dy = 1, 1
+        block = Block(50, 50, 60, 60, (0, 0, 0))
+        ObjectCollision(block, ball)
+        self.assertEqual((ball.dx, ball.dy), (-1, -1))
+
     def test_bonus_apply(self):
         block = Block(600, 1, 1, 1, (0, 0, 0))
         block.bonus = bonuses[0]
